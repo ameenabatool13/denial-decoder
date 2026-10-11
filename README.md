@@ -33,6 +33,20 @@ Gemini does one job: turn unstructured letter text into a fixed JSON schema (sum
 - **Explain, don't advise.** The prompt forbids legal or medical advice and says to ignore instructions inside the letter (prompt-injection guard).
 - **Strict output.** Invalid JSON or schema gets one retry, then a clear error.
 
+### The prompt
+The system prompt (full text in `api/analyze.js`) has four parts:
+
+1. **Role and limits:** "You EXPLAIN what the letter says. You never give legal or medical advice and never say what the law requires."
+2. **Untrusted input:** the letter is wrapped in `<letter>` tags and the model is told to ignore any instructions inside it.
+3. **Strict JSON shape:** summary at a 14-year-old reading level, plus denial reason, amount, sender, deadline, requested documents and up to 5 questions.
+4. **Hard rules:** every `quote` must be copied exactly from the letter, fields are `null` when the letter doesn't say, and `isoDate` is set only for an explicit calendar date, never calculated.
+
+**Why it's written this way:** the target users are stressed and may not read English well, so the summary is plain language. The exact-quote rule makes every claim checkable, because `verify.js` confirms each quote appears in the pasted letter. Dates are never calculated by the model because LLMs are unreliable at date math, so `plan.js` does it deterministically.
+
+**Model settings:** temperature 0.2 for consistent extraction, JSON-only output mode, and thinking disabled so reasoning tokens can't use up the output limit and truncate the JSON.
+
+**Why Gemini:** it has a free tier with an API key that needs no billing setup, which suited a portfolio project. The prompt and schema are model-agnostic, so swapping in the Claude API would only change `api/analyze.js`.
+
 ## Failure behavior
 Empty, too-long (8000 chars), and non-denial input each get a specific message. Service down or rate-limited: the user's text is kept. Missing, unclear, or passed deadlines show a loud warning instead of a guess.
 
