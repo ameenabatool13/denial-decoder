@@ -2,8 +2,8 @@
 
 Paste an insurance or benefits denial letter. Get a plain-language explanation, the key facts (each backed by a quote from your letter), and a dated action checklist.
 
-**Live app:** _add your Vercel URL_ · **Repo:** _add your GitHub URL_
-
+   **Live app:** https://denial-decoder.vercel.app · **Repo:** https://github.com/ameenabatool13/denial-decoder
+   
 ## Who it is for
 People who get a dense denial letter and have no lawyer or advocate: non-native speakers, low-literacy readers, anyone short on time. A missed appeal deadline is expensive; this tool makes the deadline impossible to miss.
 
